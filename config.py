@@ -2,7 +2,7 @@ from os.path import join, exists, isdir, abspath
 from packaging import version
 import torch
 
-ROOT_DIR = abspath('.')
+ROOT_DIR = '/media/solomentsev/HDD1/datasets/DeepSim_dataset/'
 
 DATA_DIR    = join(ROOT_DIR, 'dataset/')
 MODEL_DIR   = join(ROOT_DIR, 'models/')

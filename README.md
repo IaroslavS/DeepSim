@@ -32,6 +32,12 @@ An example of a paired aerial photo and its corresponding image is shown as foll
 Follow the instructions below, you can reproduce our program easily. 
 
 ### Environment
+```bash
+conda env create -f environment.yml
+conda activate deepsim
+pip install -r requirements.txt
+```
+
 Anaconda + Python 3.7 or higher, and other software in requirements.txt.
 
 Please create a conda env and install pytorch 1.4 and other software. Refer to `run.sh` for an example.
