@@ -20,11 +20,12 @@ class SiameseResNet(nn.Module):
                                 nn.BatchNorm1d(2048),
                                 nn.ReLU(inplace=True),
 
-                                nn.Linear(2048, 512),
-                                nn.Dropout(0.2),
-                                nn.PReLU(1),
+                                nn.Linear(2048, 8),
+                                # nn.Dropout(0.2),
+                                # nn.PReLU(1),
 
-                                nn.Linear(512, 8))
+                                # nn.Linear(512, 8)
+                                )
 
     def forward_once(self, x):
         output = self.model_conv(x)

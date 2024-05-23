@@ -2,7 +2,7 @@ from os.path import join, exists, isdir, abspath
 from packaging import version
 import torch
 
-ROOT_DIR = '/media/solomentsev/HDD1/datasets/DeepSim_dataset/'
+ROOT_DIR = '/home/isr-lab3/Desktop/DeepSim/'
 
 DATA_DIR    = join(ROOT_DIR, 'dataset/')
 MODEL_DIR   = join(ROOT_DIR, 'models/')
@@ -12,6 +12,7 @@ for d in [DATA_DIR, MODEL_DIR, RESULT_DIR, MID_PRODUCT]:
     assert exists(d) and isdir(d), d+' does not exist. Please run "mkdir '+d+'" or download the dataset.'
 
 ######  for preprocessing only ######
+ENV='DALMA'
 GDRIVE_DIR  = '???'
 KUNSHAN_1_RAW = join(GDRIVE_DIR, 'Kunshan1')
 PARIS_1_RAW = join(GDRIVE_DIR, 'Paris-Le Bourget')
@@ -51,7 +52,7 @@ FULL_AUG_960x720   = join(DATA_DIR, 'full_aug_960x720/')
 
 ERROR_TOLERANCE = join(DATA_DIR, 'error_tolerance/satellitemap')
 
-FULL_RESIZED_FEATURE        = join(MID_PRODUCT, 'features_full_res34_eval.h5')
+FULL_RESIZED_FEATURE        = join(MID_PRODUCT, 'features_full_res34_best.h5')
 FULL_RESIZED_FEATURE_NOEVAL = join(MID_PRODUCT, 'features_full_res34_noeval.h5')
 
 FULL_960x720_FEATURE_RES34  = join(MID_PRODUCT, 'features_full_960x720_res34.h5')
