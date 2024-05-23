@@ -4,6 +4,7 @@ import torch
 
 ROOT_DIR = '/media/solomentsev/HDD1/datasets/DeepSim_dataset/'
 
+ENV='DALMA'
 DATA_DIR    = join(ROOT_DIR, 'dataset/')
 MODEL_DIR   = join(ROOT_DIR, 'models/')
 RESULT_DIR  = join(ROOT_DIR, 'result/')
