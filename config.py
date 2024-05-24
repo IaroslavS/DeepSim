@@ -52,7 +52,7 @@ FULL_AUG_960x720   = join(DATA_DIR, 'full_aug_960x720/')
 
 ERROR_TOLERANCE = join(DATA_DIR, 'error_tolerance/satellitemap')
 
-FULL_RESIZED_FEATURE        = join(MID_PRODUCT, 'features_full_res34_best.h5')
+FULL_RESIZED_FEATURE        = join(MID_PRODUCT, 'features_full_res34_eval.h5')
 FULL_RESIZED_FEATURE_NOEVAL = join(MID_PRODUCT, 'features_full_res34_noeval.h5')
 
 FULL_960x720_FEATURE_RES34  = join(MID_PRODUCT, 'features_full_960x720_res34.h5')
