@@ -50,6 +50,7 @@ class FCSiameseNet(nn.Module):
                                 nn.ReLU(),
 
                                 nn.Linear(2048, 256),
+                                nn.Dropout(0.1),
                                 nn.Dropout(0.2),
                                 nn.PReLU(1),
 
@@ -206,4 +207,55 @@ class SiamesePiNet(nn.Module):
         output1 = self.forward_once(input1)
         output2 = self.forward_once(input2)
         return output1, output2
+    
 
+
+
+
+import torch.nn.utils.weight_norm as weight_norm
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class Mish(nn.Module):
+    def forward(self, x):
+        return x * torch.tanh(F.softplus(x))
+
+
+class FCSiameseJNet(nn.Module):
+    '''
+    The actual Semi-Siamese network for experiments.
+    '''
+
+    def __init__(self):
+        super(FCSiameseJNet, self).__init__()
+        self.fc = nn.Sequential(nn.Linear(prod(config.RES34_960x720_SHAPE), 2048),
+                                
+                                # nn.InstanceNorm2d(num_features=64),
+                                # nn.GroupNorm(num_groups=32, num_channels=64),
+                                # weight_norm(nn.Linear(in_features=128, out_features=64)),
+                                nn.BatchNorm1d(2048),
+                                Mish(),
+                                #nn.ReLU(inplace=True),
+
+                                nn.Linear(2048, 256),
+                                nn.Dropout(0.05),
+                                #nn.Dropout(0.1),
+                                #nn.Dropout(0.2),
+                                #nn.Dropout(0.3),
+                                #nn.Dropout(0.4),
+                                #nn.Dropout(0.5),
+                                Mish(),
+
+                                # nn.ReLU(Iinplace=True),
+
+                                #nn.PReLU(1),
+
+                                nn.Linear(256, 8))
+
+    def forward(self, input1, input2):
+        f1 = input1.view(input1.size(0), -1)
+        f2 = input2.view(input2.size(0), -1)
+        output1 = self.fc(f1)
+        output2 = self.fc(f2)
+        return output1, output2

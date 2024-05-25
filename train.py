@@ -73,7 +73,7 @@ def train_model(model, dataloaders, device,
                 with torch.set_grad_enabled(phase == 'train'):
                     outputs = model(A, B)
                     loss = criterion(outputs, labels)
-                    if model.__class__.__name__ in ['SiameseResNet', 'SiamesePiNet', 'SiameseSqueezeNet', 'FCSiameseNet']:
+                    if model.__class__.__name__ in ['SiameseResNet', 'SiamesePiNet', 'SiameseSqueezeNet', 'FCSiameseNet',"FCSiameseJNet"]:
                         dist = F.pairwise_distance(outputs[0], outputs[1])
                         preds = (dist.cpu().data.numpy()[:, np.newaxis] > (opt.margin/2))*1
                         Siamese_acc['TP'] += np.sum(np.logical_and(labels.cpu().data.numpy()==preds, preds==1))
@@ -100,7 +100,7 @@ def train_model(model, dataloaders, device,
                 def rs(s):
                     return " ".join(str(s).replace('\n', ' ').split())
                 if (1+epoch) % 5 == 2:
-                    if model.__class__.__name__ in ['SiameseResNet', 'SiamesePiNet', 'SiameseSqueezeNet', 'FCSiameseNet']:
+                    if model.__class__.__name__ in ['SiameseResNet', 'SiamesePiNet', 'SiameseSqueezeNet', 'FCSiameseNet',"FCSiameseJNet"]:
                         data_str=('%s, %s, %s, %s' %
                                   ( rs(dist.cpu().data), rs(preds),
                                     rs(labels.cpu().data), torch.sum(torch.from_numpy(preds) == labels.cpu().long())
@@ -119,7 +119,7 @@ def train_model(model, dataloaders, device,
             epoch_loss = running_loss / dataset_sizes[phase]
             epoch_acc = running_corrects.double() / dataset_sizes[phase]
 
-            if model.__class__.__name__ in ['SiameseResNet', 'SiamesePiNet', 'SiameseSqueezeNet', 'FCSiameseNet']:
+            if model.__class__.__name__ in ['SiameseResNet', 'SiamesePiNet', 'SiameseSqueezeNet', 'FCSiameseNet',"FCSiameseJNet"]:
                 print("\n%s, TPR(Paired acc):%.2f, TNR(Unpaired acc):%.2f" %
                     (phase, Siamese_acc['TP']/(Siamese_acc['TP']+Siamese_acc['FN']),
                     Siamese_acc['TN']/(Siamese_acc['TN']+Siamese_acc['FP']),), end=' | ')
