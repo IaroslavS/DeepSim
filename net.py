@@ -19,7 +19,43 @@ class SiameseResNet(nn.Module):
         self.fc = nn.Sequential(nn.Linear(prod(config.RES34_960x720_SHAPE), 2048),
                                 nn.BatchNorm1d(2048),
                                 nn.ReLU(inplace=True),
+                                # nn.Linear(2048, 1024),
+                                # nn.BatchNorm1d(1024),
+                                # nn.ReLU(inplace=True),
+                                nn.Linear(2048, 512),
+                                nn.Dropout(0.2),
+                                nn.PReLU(1),
 
+                                nn.Linear(512, 8))
+
+    def forward_once(self, x):
+        output = self.model_conv(x)
+        output = output.view(output.size()[0], -1)
+        output = self.fc(output)
+        return output
+
+    def forward(self, input1, input2):
+        output1 = self.forward_once(input1)
+        output2 = self.forward_once(input2)
+        return output1, output2
+
+class SiameseResNeXt(nn.Module):
+    '''
+    Siamese Network transfer learning use pretrained ResNeXt.
+    '''
+
+    def __init__(self):
+        super(SiameseResNeXt, self).__init__()
+        pretrained_model = torchvision.models.resnext50_32x4d(pretrained=True)
+        if config.RESNET_POOLING == 'fixed' and str(pretrained_model.avgpool)[:8] == 'Adaptive':
+            pretrained_model.avgpool = nn.AvgPool2d(kernel_size=7, stride=1, padding=0)
+        self.model_conv = nn.Sequential(*list(pretrained_model.children())[:-1])
+        self.fc = nn.Sequential(nn.Linear(prod(config.RES34_960x720_SHAPE), 2048),
+                                nn.BatchNorm1d(2048),
+                                nn.ReLU(inplace=True),
+                                # nn.Linear(2048, 1024),
+                                # nn.BatchNorm1d(1024),
+                                # nn.ReLU(inplace=True),
                                 nn.Linear(2048, 512),
                                 nn.Dropout(0.2),
                                 nn.PReLU(1),

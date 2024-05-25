@@ -16,8 +16,10 @@ from Dataset import SatUAVH5Dataset, SatUAVDataset
 from utils import data_transforms
 
 model_names = sorted(name for name in net.__dict__
-                     if name.endswith("Net")
+                     if (name.endswith("Net") or name.startswith("Siamese"))
                      and callable(net.__dict__[name]))
+
+# print(net.__dict__)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--nepoch', type=int, default=25,  help='number of training epochs')
@@ -73,7 +75,7 @@ def train_model(model, dataloaders, device,
                 with torch.set_grad_enabled(phase == 'train'):
                     outputs = model(A, B)
                     loss = criterion(outputs, labels)
-                    if model.__class__.__name__ in ['SiameseResNet', 'SiamesePiNet', 'SiameseSqueezeNet', 'FCSiameseNet']:
+                    if model.__class__.__name__ in ['SiameseResNet', 'SiameseResNeXt', 'SiamesePiNet', 'SiameseSqueezeNet', 'FCSiameseNet']:
                         dist = F.pairwise_distance(outputs[0], outputs[1])
                         preds = (dist.cpu().data.numpy()[:, np.newaxis] > (opt.margin/2))*1
                         Siamese_acc['TP'] += np.sum(np.logical_and(labels.cpu().data.numpy()==preds, preds==1))
@@ -100,7 +102,7 @@ def train_model(model, dataloaders, device,
                 def rs(s):
                     return " ".join(str(s).replace('\n', ' ').split())
                 if (1+epoch) % 5 == 2:
-                    if model.__class__.__name__ in ['SiameseResNet', 'SiamesePiNet', 'SiameseSqueezeNet', 'FCSiameseNet']:
+                    if model.__class__.__name__ in ['SiameseResNet', 'SiameseResNeXt', 'SiamesePiNet', 'SiameseSqueezeNet', 'FCSiameseNet']:
                         data_str=('%s, %s, %s, %s' %
                                   ( rs(dist.cpu().data), rs(preds),
                                     rs(labels.cpu().data), torch.sum(torch.from_numpy(preds) == labels.cpu().long())
@@ -119,7 +121,7 @@ def train_model(model, dataloaders, device,
             epoch_loss = running_loss / dataset_sizes[phase]
             epoch_acc = running_corrects.double() / dataset_sizes[phase]
 
-            if model.__class__.__name__ in ['SiameseResNet', 'SiamesePiNet', 'SiameseSqueezeNet', 'FCSiameseNet']:
+            if model.__class__.__name__ in ['SiameseResNet', 'SiameseResNeXt', 'SiamesePiNet', 'SiameseSqueezeNet', 'FCSiameseNet']:
                 print("\n%s, TPR(Paired acc):%.2f, TNR(Unpaired acc):%.2f" %
                     (phase, Siamese_acc['TP']/(Siamese_acc['TP']+Siamese_acc['FN']),
                     Siamese_acc['TN']/(Siamese_acc['TN']+Siamese_acc['FP']),), end=' | ')
@@ -155,9 +157,14 @@ if __name__ == '__main__':
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
 
-    if opt.model in ['SiameseResNet', 'SiameseSqueezeNet']:
+    if opt.model in ['SiameseResNet', 'SiameseResNeXt', 'SiameseSqueezeNet']:
         num_workers = 0
-        model = net.SiameseResNet() if opt.model == 'SiameseResNet' else net.SiameseSqueezeNet()
+        if opt.model == 'SiameseResNet':
+            model = net.SiameseResNet()
+        elif opt.model == 'SiameseResNeXt':
+            model = net.SiameseResNeXt()
+        else:
+            model = net.SiameseSqueezeNet()
         model.to(device)
         optimizer = optim.SGD(model.parameters(), lr=opt.lr, momentum=0.9)
         lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=opt.step, gamma=0.1) # Decay LR by a factor of 0.1 every opt.step epochs
