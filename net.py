@@ -50,17 +50,16 @@ class SiameseResNeXt(nn.Module):
         if config.RESNET_POOLING == 'fixed' and str(pretrained_model.avgpool)[:8] == 'Adaptive':
             pretrained_model.avgpool = nn.AvgPool2d(kernel_size=7, stride=1, padding=0)
         self.model_conv = nn.Sequential(*list(pretrained_model.children())[:-1])
-        self.fc = nn.Sequential(nn.Linear(prod(config.RES34_960x720_SHAPE), 2048),
-                                nn.BatchNorm1d(2048),
-                                nn.ReLU(inplace=True),
+        self.fc = nn.Sequential(nn.Linear(prod(config.RES34_960x720_SHAPE), 128),
+                                nn.Dropout(0.2),
+                                nn.BatchNorm1d(128),
+                                # nn.ReLU(inplace=True),
                                 # nn.Linear(2048, 1024),
                                 # nn.BatchNorm1d(1024),
                                 # nn.ReLU(inplace=True),
-                                nn.Linear(2048, 512),
-                                nn.Dropout(0.2),
+                                # nn.Linear(512, 512),
                                 nn.PReLU(1),
-
-                                nn.Linear(512, 8))
+                                nn.Linear(128, 8))
 
     def forward_once(self, x):
         output = self.model_conv(x)
