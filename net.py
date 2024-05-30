@@ -30,6 +30,7 @@ class SiameseResNet(nn.Module):
 
     def forward_once(self, x):
         output = self.model_conv(x)
+        # print(output.shape)
         output = output.view(output.size()[0], -1)
         output = self.fc(output)
         return output
@@ -63,6 +64,7 @@ class SiameseResNeXt(nn.Module):
 
     def forward_once(self, x):
         output = self.model_conv(x)
+        print(output.shape)
         output = output.view(output.size()[0], -1)
         output = self.fc(output)
         return output

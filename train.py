@@ -201,6 +201,7 @@ if __name__ == '__main__':
                                                   shuffle=True, num_workers=num_workers) for x in ['train', 'val']}
     time_str = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M")
     print(model.__class__.__name__, 'is created at:', time_str)
+    print(config.RES34_960x720_SHAPE)
 
     # Training
     print(model)
